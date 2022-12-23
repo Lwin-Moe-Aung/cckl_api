@@ -1,0 +1,27 @@
+version: "3.8"
+
+services: 
+  cckl_app:
+    container_name: cckl-api
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports: 
+      - 8080:8080
+    volumes: 
+      - .:/app
+      - '/app/node_modules'
+    depends_on: 
+      - cckl_mysql
+  
+  cckl_mysql:
+    image: mysql:8.0
+    ports: 
+      - 3307:3306
+    environment: 
+      - MYSQL_DATABASE=cckl_database
+      - MYSQL_USER=cckl_admin
+      - MYSQL_PASSWORD=cckl_root
+      - MYSQL_ROOT_PASSWORD=cckl_root
+
+    
