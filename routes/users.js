@@ -3,9 +3,9 @@ const router = express.Router()
 const verifyIsAdmin = require('../middlewares/verifyIsAdmin');
 const paginatedResults = require('../middlewares/paginatedResults');
 
-// validation
+//* validation
 const Validator = require('../validation/middlewares/validateMiddleware');
-// Model
+//* Model
 const db =  require("../models");
 const User = db.users;
 
@@ -17,7 +17,7 @@ router.route('/update').post([verifyIsAdmin(), Validator('updateUserSchema')], u
 router.route('/delete').post([verifyIsAdmin(), Validator('deleteUserSchema')], deleteUser)
 
 
-// router.route('/:id').get(getUser);   
-router.route("/profile").get( getUser);
+router.route('/:id').get(getUser);   
+
 
 module.exports = router

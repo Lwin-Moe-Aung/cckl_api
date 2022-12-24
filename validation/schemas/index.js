@@ -1,8 +1,11 @@
-const {createUserSchema, updateUserSchema, deleteUserSchema} = require('./userSchema')
-
+const { createUserSchema, updateUserSchema, deleteUserSchema } = require('./userSchema');
+const { createCategorySchema, updateCategorySchema, deleteCategorySchema } = require('./categorySchema');
 module.exports = {
     createUserSchema,
     updateUserSchema,
-    deleteUserSchema
+    deleteUserSchema,
+    createCategorySchema,
+    updateCategorySchema,
+    deleteCategorySchema
 }
 
