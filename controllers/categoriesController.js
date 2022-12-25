@@ -26,6 +26,7 @@ const createCategory = async (req, res) => {
     return res.status(200).json('Category successfully created!');
     // throw new Error("User not found dd");
 }
+
 //* update category by admins 
 const updateCategory = async (req, res) => {
     const category = await Category.findOne({ where: { id: req.body.id}});
@@ -36,6 +37,7 @@ const updateCategory = async (req, res) => {
     category.save();
     return res.status(200).json(category);
 }
+
 //* delete category by admins
 const deleteCategory = async (req, res) => {
     await Category.destroy({ where: {id: req.body.category_id}, force: true});

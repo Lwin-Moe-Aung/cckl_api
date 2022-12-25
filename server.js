@@ -45,14 +45,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, './public')));
 
 
-//* end points
+//* api end points
 app.use("/api/auth", authRouter)
 app.use(verifyJWT); //* Jwt Auth middleware
 app.use("/api/uploads", imageUploadRouter)
 app.use("/api/users", userRouter)
-app.use("/api/posts", postRouter)
 app.use("/api/categories", categoryRouter)
-
+app.use("/api/posts", postRouter)
 
 
 app.all('*', (req, res) => {

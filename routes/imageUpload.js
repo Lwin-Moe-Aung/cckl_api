@@ -1,10 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
-const uploader = require('../middlewares/userProfileImagesUploader');
+//* middlewares
+const profileUploader = require('../middlewares/userProfileImagesUploader');
+const postImageUploader = require('../middlewares/postImagesUploader');
+
+//* controller
 const { upload } = require("../controllers/uploadsController.js");
 
-console.log("hello ----------wordl")
-router.route('/profile').post(uploader.single('photo'), upload )
+//* try catch
+const { tryCatch } = require('../utils/tryCatch');
+
+router.route('/profile').post(profileUploader.single('photo'), tryCatch(upload) )
+router.route('/post-image').post(postImageUploader.single('image'), tryCatch(upload) )
+
 
 module.exports = router

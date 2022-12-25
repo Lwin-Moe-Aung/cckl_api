@@ -1,19 +1,28 @@
 const express = require('express');
-const {
-    addPost,
-    deletePost,
-    getPost,
-    getPosts,
-    updatePost,
-  } = require("../controllers/postController.js");
-
-  
 const router = express.Router()
+const verifyIsAdmin = require('../middlewares/verifyIsAdmin');
+const paginatedResults = require('../middlewares/paginatedResults');
 
-router.get("/", getPosts);
-router.get("/:id", getPost);
-router.post("/", addPost);
-router.delete("/:id", deletePost);
-router.put("/:id", updatePost);
+//* validation
+const Validator = require('../validation/middlewares/validateMiddleware');
+
+//* Model
+const db =  require("../models");
+const Post = db.posts;
+
+//* try catch
+const { tryCatch } = require('../utils/tryCatch');
+
+//* contorller 
+const { getAllPosts, getPost, createPost, updatePost, deletePost, checkSlug} = require("../controllers/postController.js");
+
+router.route('/all').get([verifyIsAdmin(), paginatedResults(Post)], tryCatch(getAllPosts))
+router.route('/:id').get([verifyIsAdmin()], tryCatch(getPost))
+router.route('/create').post([verifyIsAdmin(), Validator('createPostSchema')], tryCatch(createPost))
+router.route('/update').post([verifyIsAdmin(), Validator('updatePostSchema')], tryCatch(updatePost))
+router.route('/delete').post([verifyIsAdmin(), Validator('deletePostSchema')], tryCatch(deletePost))
+router.route('/check-slug').post([verifyIsAdmin(), Validator('checkSlugSchema')], tryCatch(checkSlug))
+
 
 module.exports = router
+  

@@ -22,7 +22,9 @@ module.exports =  (sequelize, DataTypes) => {
             allowNull: false
         },
         is_admin: {
-            type: DataTypes.BOOLEAN
+            type: DataTypes.BOOLEAN,
+            allowNull: false, 
+            defaultValue: true
         },
         refresh_token: {
             type: DataTypes.STRING,

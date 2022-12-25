@@ -1,100 +1,77 @@
-// const db = require("../db.js");
+const slugify = require('slugify')
 const db =  require("../models");
 const Post = db.posts;
-const User = db.users;
 
-
-// const getPosts = (req, res) => {
-//   const q = req.query.cat
-//       ? "SELECT * FROM posts WHERE cat=?"
-//       : "SELECT * FROM posts";
-//   db.query(q, [req.query.cat], (err, data) => {
-//     if (err) return res.status(500).send(err);
-      
-//     return res.status(200).json(data);
-//   });
-// }
-
-// get all posts
-const getPosts = async (req, res) => {
-  let posts = await Post.findAll({});
-  res.status(200).send(posts);
+//* get all posts by admains
+const checkSlug = async (req, res) => {
+  const slug = slugify(req.body.post_title, { lower: true, strict: true })
+  const post = await Post.findOne({ where: { slug: slug}});
+  if(post) throw new Error("Slug already exist!");
+  
+  return res.status(200).json( slug);
 }
 
-const getPost = (req, res) => {
-  const q =
-      "SELECT p.id, `username`, `title`, `desc`, p.img, u.img AS userImg, `cat`,`date` FROM users u JOIN posts p ON u.id = p.uid WHERE p.id = ? ";
-  
-  db.query(q, [req.params.id], (err, data) => {
-    console.log(data[0]);
-    if (err) return res.status(500).json(err);
-    return res.status(200).json(data[0]);
+//* get all posts by admains
+const getAllPosts = (req, res) => {
+  return res.send({
+    data: res.paginatedResults,
+    totalPages: res.totalPages
   });
-};
-  
-const addPost = (req, res) => {
-  const token = req.cookies.access_token;
-  if (!token) return res.status(401).json("Not authenticated!");
-  
-  jwt.verify(token, "jwtkey", (err, userInfo) => {
-    if (err) return res.status(403).json("Token is not valid!");
+}
 
-    const q =
-      "INSERT INTO posts(`title`, `desc`, `img`, `cat`, `date`,`uid`) VALUES (?)";
+//* get post by admins through ID
+const getPost = async (req, res) => {
+  const post = await Post.findOne({ where: { id: req.params.id }});
+  if( post == null ) throw new Error("Post not found!");
 
-    const values = [
-      req.body.title,
-      req.body.desc,
-      req.body.img,
-      req.body.cat,
-      req.body.date,
-      userInfo.id,
-    ];
+  return res.status(200).json(post);
+}
 
-    
-    db.query(q, [values], (err, data) => {
-      if (err) return res.status(500).json(err);
-      return res.json("Post has been created.");
-    });
+//* create new post by admins
+const createPost = async (req, res) => {
+  //* check slug already exist or not
+  const data = await Post.findOne({ where: { slug: req.body.slug}});
+  if(data) throw new Error("Slug already exist!");
+
+  const post = await Post.create({
+    title: req.body.title,
+    description: req.body.description,
+    image: req.body.image,
+    slug: req.body.slug,
+    user_id: req.body.user_id,
+    category_id: req.body.category_id,
+    published: req.body.published
   });
-};
-  
-const deletePost = (req, res) => {
-  const token = req.cookies.access_token;
-  if (!token) return res.status(401).json("Not authenticated!");
 
-  jwt.verify(token, "jwtkey", (err, userInfo) => {
-    if (err) return res.status(403).json("Token is not valid!");
+  return res.status(200).json(post)
+}
 
-    const postId = req.params.id;
-    const q = "DELETE FROM posts WHERE `id` = ? AND `uid` = ?";
+//* update post by admins
+const updatePost = async (req, res) => {
+  //* check slug already exist or not
+  const data = await Post.findOne({ where: { slug: req.body.slug}});
+  if(data) throw new Error("Slug already exist!");
 
-    db.query(q, [postId, userInfo.id], (err, data) => {
-      if (err) return res.status(403).json("You can delete only your post!");
+  const post = await Post.findOne({ where: { id: req.body.id}});
+  if(!post) throw new Error("Post doesn't exist!");
 
-      return res.json("Post has been deleted!");
-    });
-  });
-};
-  
-const updatePost = (req, res) => {
-  const token = req.cookies.access_token;
-  if (!token) return res.status(401).json("Not authenticated!");
+  post.title = req.body.title;
+  post.slug = req.body.slug;
+  post.description = req.body.description;
+  post.image = req.body.image;
+  post.user_id = req.body.user_id;
+  post.category_id = req.body.category_id;
+  post.published = req.body.published;
+  post.save();
 
-  jwt.verify(token, "jwtkey", (err, userInfo) => {
-    if (err) return res.status(403).json("Token is not valid!");
+  return res.status(200).json(post);
+}
 
-    const postId = req.params.id;
-    const q =
-      "UPDATE posts SET `title`=?,`desc`=?,`img`=?,`cat`=? WHERE `id` = ? AND `uid` = ?";
+//* delete post by admins
+const deletePost = async (req, res) => {
+  await Post.destroy({ where: {id: req.body.post_id}, force: true});
 
-    const values = [req.body.title, req.body.desc, req.body.img, req.body.cat];
+  return res.status(200).json("Post deleted successfully!");
+}
 
-    db.query(q, [...values, postId, userInfo.id], (err, data) => {
-      if (err) return res.status(500).json(err);
-      return res.json("Post has been updated.");
-    });
-  });
-};
-  
-module.exports = {getPosts, getPost, addPost, deletePost, updatePost}
+module.exports = { getAllPosts, getPost, createPost, updatePost, deletePost, checkSlug}

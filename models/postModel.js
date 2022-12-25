@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         slug: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
         user_id: { // name of foreign key using naming convention
             type: DataTypes.INTEGER,
@@ -42,10 +43,12 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'cascade',
         },
         published: {
-            type: DataTypes.BOOLEAN
+            type: DataTypes.BOOLEAN,
+            allowNull: false, 
+            defaultValue: true
         }
     })
-
+   
     return Post
 
 }
