@@ -16,6 +16,8 @@ const authRouter = require('./routes/auth.js')
 const userRouter = require('./routes/users.js')
 const imageUploadRouter = require('./routes/imageUpload.js')
 const categoryRouter = require('./routes/categories.js')
+const adminAuthRouter = require('./routes/adminAuth.js')
+const refreshTokenRouter = require('./routes/refreshToken.js')
 // const { postRouter, authRouter, userRouter, imageUploadRouter, categoryRouter } = require('./routes')
 const cookieParser = require('cookie-parser')
 const corsOptions = require('./config/corsOptions.js')
@@ -46,12 +48,15 @@ app.use(express.static(path.join(__dirname, './public')));
 
 
 //* api end points
+
 app.use("/api/auth", authRouter)
+app.use("/api/admin/auth", adminAuthRouter)
+app.use("/api/refresh-access-token", refreshTokenRouter)
 app.use(verifyJWT); //* Jwt Auth middleware
-app.use("/api/uploads", imageUploadRouter)
-app.use("/api/users", userRouter)
-app.use("/api/categories", categoryRouter)
-app.use("/api/posts", postRouter)
+app.use("/api/admin/uploads", imageUploadRouter)
+app.use("/api/admin/users", userRouter)
+app.use("/api/admin/categories", categoryRouter)
+app.use("/api/admin/posts", postRouter)
 
 
 app.all('*', (req, res) => {
