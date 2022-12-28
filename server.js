@@ -11,9 +11,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 //* routes
+const userRouter = require('./routes/users.js')
 const postRouter = require('./routes/posts.js')
 const authRouter = require('./routes/auth.js')
-const userRouter = require('./routes/users.js')
 const imageUploadRouter = require('./routes/imageUpload.js')
 const categoryRouter = require('./routes/categories.js')
 const adminAuthRouter = require('./routes/adminAuth.js')
@@ -48,7 +48,6 @@ app.use(express.static(path.join(__dirname, './public')));
 
 
 //* api end points
-
 app.use("/api/auth", authRouter)
 app.use("/api/admin/auth", adminAuthRouter)
 app.use("/api/refresh-access-token", refreshTokenRouter)
@@ -59,33 +58,18 @@ app.use("/api/admin/categories", categoryRouter)
 app.use("/api/admin/posts", postRouter)
 
 
-app.all('*', (req, res) => {
-  res.status(404);
-  if (req.accepts('html')) {
-    res.sendFile(path.json(__dirname, 'views', '404.html'));
-  }else if (req.accepts('json')) {
-    res.json({ 'error' : '404 Not Found' });
-  }else {
-    res.type('txt').send('404 Not Found');
-  }
-});
-//* Catch HTTP 404 
-app.use((req, res, next) => {
-  next(createHttpError(404));
-})
-
-app.use(errorHandler);
-
 //* Error Handler
-// app.use((err, req, res, next) => {
-//   res.status(err.status || 500);
-//   res.json({
-//       error: {
-//           status: err.status || 500,
-//           message: err.message
-//       }
-//   })
-// });
+app.use(errorHandler);
+app.use((err, req, res, next) => {
+  res.status(err.status || 500);
+  res.json({
+      error: {
+          status: err.status || 500,
+          message: err.message
+      }
+  })
+});
+
 
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT}`)
