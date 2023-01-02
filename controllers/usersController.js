@@ -11,14 +11,19 @@ const getAllUsers = async (req, res) => {
     });
 }
 
-const getUser = (req, res) => {
-    res.send("get User");
+//* get user by admins through category ID
+const getUser = async (req, res) => {
+    let user = await User.findOne({ where: { id: req.params.id }});
+    if( user == null ) throw new Error("User not found!");
+
+    return res.status(200).json(user);
 }
 
 // create new user by admin
 const createUser = async (req, res) => {
+    console.log(req.body);
     const user = await User.findOne({ where: { email: req.body.email } });
-    if(user != null) return res.status(409).json("Email already exists!");
+    if(user != null) return res.status(400).json({message:"Email already exists!"});
 
     //Hash the password and create a user
     const salt = await bcrypt.genSaltSync(10);
@@ -40,6 +45,7 @@ const createUser = async (req, res) => {
 
 // update user Profile
 const updateUser = async (req, res) => {
+    // return res.send("hello world");
     let user = await User.findOne({ where: { id: req.body.id } })
     if(user == null ) return res.status(400).json("Bad request:  ID does not match data from users table!");
 

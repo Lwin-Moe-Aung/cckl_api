@@ -16,7 +16,8 @@ const paginatedResults = (model) => {
     try {
       const results = await model.findAndCountAll({
                               limit: size,
-                              offset: page * size
+                              offset: page * size,
+                              order: [['createdAt', 'DESC']]
                             });
 
       res.paginatedResults = results.rows

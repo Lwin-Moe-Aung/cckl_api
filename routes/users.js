@@ -9,6 +9,8 @@ const Validator = require('../validation/middlewares/validateMiddleware');
 const db =  require("../models");
 const User = db.users;
 
+const { tryCatch } = require('../utils/tryCatch');
+
 const { getAllUsers, getUser, createUser, updateUser, deleteUser} = require("../controllers/usersController.js");
 
 router.route('/all').get([verifyIsAdmin(), paginatedResults(User)], getAllUsers)
@@ -17,7 +19,7 @@ router.route('/update').post([verifyIsAdmin(), Validator('updateUserSchema')], u
 router.route('/delete').post([verifyIsAdmin(), Validator('deleteUserSchema')], deleteUser)
 
 
-router.route('/:id').get(getUser);   
+router.route('/:id').get(tryCatch(getUser));   
 
 
 module.exports = router

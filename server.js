@@ -51,8 +51,9 @@ app.use(express.static(path.join(__dirname, './public')));
 app.use("/api/auth", authRouter)
 app.use("/api/admin/auth", adminAuthRouter)
 app.use("/api/refresh-access-token", refreshTokenRouter)
-app.use(verifyJWT); //* Jwt Auth middleware
 app.use("/api/admin/uploads", imageUploadRouter)
+
+app.use(verifyJWT); //* Jwt Auth middleware
 app.use("/api/admin/users", userRouter)
 app.use("/api/admin/categories", categoryRouter)
 app.use("/api/admin/posts", postRouter)
