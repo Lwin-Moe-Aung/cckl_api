@@ -5,6 +5,7 @@ const storage = multer.diskStorage({
         cb(null, `${__dirname}/../public/uploads/posts`);
     },
     filename: (req, file, cb) => {
+        console.log(file)
         let lastIndex = file.originalname.lastIndexOf(".");
         // get the original extension of the file
         let extension = file.originalname.substring(lastIndex);
