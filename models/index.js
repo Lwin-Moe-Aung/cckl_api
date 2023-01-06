@@ -23,7 +23,7 @@ sequelize.authenticate()
     console.log('DB connected..')
 })
 .catch(err => {
-    console.log('Error 123'+ err)
+    console.log('Error:'+ err)
 })
 
 const db = {}
@@ -35,6 +35,8 @@ db.users = require( './userModel.js')(sequelize, DataTypes);
 db.categories = require( './categoryModel.js')(sequelize, DataTypes);
 db.posts = require( './postModel.js')(sequelize, DataTypes);
 db.comments = require( './commentModel.js')(sequelize, DataTypes);
+db.post_categories = require( './postCategoryModel.js')(sequelize, DataTypes);
+
 
 db.sequelize.sync({ force: false })
 .then(() => {
@@ -43,31 +45,18 @@ db.sequelize.sync({ force: false })
 
 
 
-// 1 to Many Relation
+//* one to Many Relation
+db.users.hasMany(db.posts, { foreignKey: 'user_id', as: 'userPost'})
+db.posts.belongsTo(db.users, { foreignKey: 'user_id', as: 'postUser' })
 
-db.users.hasMany(db.posts, {
-    foreignKey: 'user_id',
-    as: 'post'
-})
+db.users.hasMany(db.comments, { foreignKey: 'user_id', as: 'userComment' })
+db.comments.belongsTo(db.users, { foreignKey: 'user_id', as: 'commentUser' })
 
-db.categories.hasMany(db.posts, {
-    foreignKey: 'category_id',
-    as: 'post'
-})
+db.posts.hasMany(db.comments, { foreignKey: 'post_id', as: 'postComment' })
+db.comments.belongsTo(db.posts, { foreignKey: 'post_id', as: 'commentPost' })
 
-db.users.hasMany(db.comments, {
-    foreignKey: 'user_id',
-    as: 'comment'
-})
-
-db.posts.hasMany(db.comments, {
-    foreignKey: 'post_id',
-    as: 'comment'
-})
-
-// db.reviews.belongsTo(db.products, {
-//     foreignKey: 'product_id',
-//     as: 'product'
-// })
+//* Many to Many 
+db.posts.belongsToMany(db.categories, { through: 'post_category'});
+db.categories.belongsToMany(db.posts, { through: 'post_category'});
 
 module.exports = db

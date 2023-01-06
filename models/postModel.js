@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         image: {
-            type: DataTypes.STRING
+            type: DataTypes.JSON
         },
         slug: {
             type: DataTypes.STRING,
@@ -26,16 +26,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             references: {
               model: { tableName: 'users' }, // provide table name
-              key: 'id' // PK of the User Model
-            },
-            allowNull: false,
-            onUpdate: 'cascade',
-            onDelete: 'cascade',
-        },
-        category_id: { // name of foreign key using naming convention
-            type: DataTypes.INTEGER,
-            references: {
-              model: { tableName: 'categories' }, // provide table name
               key: 'id' // PK of the User Model
             },
             allowNull: false,

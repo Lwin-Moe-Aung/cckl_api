@@ -14,11 +14,15 @@ const Category = db.categories;
 const { tryCatch } = require('../utils/tryCatch');
 
 //* contorller 
-const { getAllCategories, getCategory, createCategory, updateCategory, deleteCategory} = require("../controllers/categoriesController.js");
+const { getAllCategories, getAllPublishedCategories, getCategory, createCategory, updateCategory, deleteCategory} = require("../controllers/categoriesController.js");
 
 router.route('/all').get([verifyIsAdmin(), paginatedResults(Category)], tryCatch(getAllCategories))
+//* get published categories
+router.route('/published-categories').get([verifyIsAdmin()], getAllPublishedCategories)
+
 router.route('/create').post([verifyIsAdmin(), Validator('createCategorySchema')], tryCatch(createCategory))
 router.route('/update').post([verifyIsAdmin(), Validator('updateCategorySchema')], tryCatch(updateCategory))
 router.route('/delete').post([verifyIsAdmin(), Validator('deleteCategorySchema')], tryCatch(deleteCategory))
 router.route('/:id').get([verifyIsAdmin()], tryCatch(getCategory))
+
 module.exports = router

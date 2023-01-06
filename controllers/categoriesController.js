@@ -9,6 +9,17 @@ const getAllCategories = (req, res) => {
     });
 }
 
+//* get all published categories by admins
+const getAllPublishedCategories = async (req, res) => {
+    const cates = await Category.findAll({ 
+        where: {published: true},
+        attributes: ['id', 'name']
+    });
+    if( cates == null ) throw new Error("Categories not found!");
+
+    return res.status(200).json(cates);
+}
+
 //* get categoy by admins through category ID
 const getCategory = async (req, res) => {
     let category = await Category.findOne({ where: { id: req.params.id }});
@@ -45,4 +56,4 @@ const deleteCategory = async (req, res) => {
     return res.status(200).json("Category deleted successfully!");
 
 }
-module.exports = { getAllCategories, getCategory, createCategory, updateCategory, deleteCategory}
+module.exports = { getAllCategories, getAllPublishedCategories, getCategory, createCategory, updateCategory, deleteCategory}

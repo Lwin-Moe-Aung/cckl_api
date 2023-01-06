@@ -1,7 +1,7 @@
 const slugify = require('slugify')
 const db =  require("../models");
 const Post = db.posts;
-
+const PostCategory = db.post_categories;
 //* get all posts by admains
 const checkSlug = async (req, res) => {
   const slug = slugify(req.body.post_title, { lower: true, strict: true })
@@ -29,18 +29,25 @@ const getPost = async (req, res) => {
 
 //* create new post by admins
 const createPost = async (req, res) => {
-  //* check slug already exist or not
-  const data = await Post.findOne({ where: { slug: req.body.slug}});
-  if(data) throw new Error("Slug already exist!");
+
+  const slug = slugify(req.body.title, { lower: true, strict: true })
+  const data = await Post.findOne({ where: { slug: slug}});
+  if(data) throw new Error("Title already exist!");
 
   const post = await Post.create({
     title: req.body.title,
     description: req.body.description,
     image: req.body.image,
-    slug: req.body.slug,
+    slug: slug,
     user_id: req.body.user_id,
-    category_id: req.body.category_id,
     published: req.body.published
+  });
+
+  req.body.category_id.map(item => {
+    PostCategory.create({
+      postId: post.id,
+      categoryId: item.id
+    })
   });
 
   return res.status(200).json(post)
