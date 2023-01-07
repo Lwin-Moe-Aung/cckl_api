@@ -10,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        cover_image: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         description: {
             type: DataTypes.TEXT,
             allowNull: false
@@ -31,6 +35,9 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             onUpdate: 'cascade',
             onDelete: 'cascade',
+        },
+        view_count: {
+            type: DataTypes.INTEGER
         },
         published: {
             type: DataTypes.BOOLEAN,

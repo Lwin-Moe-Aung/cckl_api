@@ -1,7 +1,10 @@
 const slugify = require('slugify')
 const db =  require("../models");
+const { post } = require('../routes/posts');
 const Post = db.posts;
 const PostCategory = db.post_categories;
+const Sequelize = db.Sequelize;
+
 //* get all posts by admains
 const checkSlug = async (req, res) => {
   const slug = slugify(req.body.post_title, { lower: true, strict: true })
@@ -12,16 +15,34 @@ const checkSlug = async (req, res) => {
 }
 
 //* get all posts by admains
-const getAllPosts = (req, res) => {
-  return res.send({
-    data: res.paginatedResults,
-    totalPages: res.totalPages
+const getAllPosts = async (req, res) => {
+  const posts = await Post.findAll({  
+    attributes: ['id', 'title', 'cover_image', 'slug', 'view_count', 'published', 'createdAt'],
+    include:[ 
+      {
+        association:'postUser',
+        attributes: ['id', 'username', 'email', 'photo'],
+      },
+      {
+        association: 'postComment',
+        attributes: ['id', 'comment']
+        // attributes: [[Sequelize.fn("COUNT", Sequelize.col("postComment.id")), "comment_counts"]] 
+      }
+    ],
+    order: [['createdAt', 'DESC']]
   });
+
+  return res
+    .status(200)
+    .json({
+      data: posts,
+      totalPages: 1
+    });
 }
 
 //* get post by admins through ID
 const getPost = async (req, res) => {
-  const post = await Post.findOne({ where: { id: req.params.id }});
+  const post = await Post.findOne({ where: { slug: req.params.slug }});
   if( post == null ) throw new Error("Post not found!");
 
   return res.status(200).json(post);
@@ -29,13 +50,13 @@ const getPost = async (req, res) => {
 
 //* create new post by admins
 const createPost = async (req, res) => {
-
   const slug = slugify(req.body.title, { lower: true, strict: true })
   const data = await Post.findOne({ where: { slug: slug}});
   if(data) throw new Error("Title already exist!");
 
   const post = await Post.create({
     title: req.body.title,
+    cover_image: req.body.cover_image,
     description: req.body.description,
     image: req.body.image,
     slug: slug,
