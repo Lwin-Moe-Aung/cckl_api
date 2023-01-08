@@ -42,7 +42,17 @@ const getAllPosts = async (req, res) => {
 
 //* get post by admins through ID
 const getPost = async (req, res) => {
-  const post = await Post.findOne({ where: { slug: req.params.slug }});
+  const post = await Post.findOne({
+    include:{
+      association: 'postCategories',
+      attributes: ['id', 'name'],
+      where:{
+        published:true
+      }
+      
+    },
+    where: { slug: req.params.slug }
+  });
   if( post == null ) throw new Error("Post not found!");
 
   return res.status(200).json(post);

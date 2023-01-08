@@ -56,7 +56,7 @@ db.posts.hasMany(db.comments, { foreignKey: 'post_id', as: 'postComment' })
 db.comments.belongsTo(db.posts, { foreignKey: 'post_id', as: 'commentPost' })
 
 //* Many to Many 
-db.posts.belongsToMany(db.categories, { through: 'post_category'});
-db.categories.belongsToMany(db.posts, { through: 'post_category'});
+db.posts.belongsToMany(db.categories, { through: 'post_category', as: 'postCategories'});
+db.categories.belongsToMany(db.posts, { through: 'post_category', as: 'categoryPosts'});
 
 module.exports = db
