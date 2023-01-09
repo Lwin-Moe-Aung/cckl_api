@@ -47,7 +47,7 @@ const login = (req, res) => {
                 }
             }, 
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '1d' }
+            { expiresIn: '10s' }
         );
        
         const refreshToken = jwt.sign(
