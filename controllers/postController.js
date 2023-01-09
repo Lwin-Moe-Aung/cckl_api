@@ -87,21 +87,30 @@ const createPost = async (req, res) => {
 //* update post by admins
 const updatePost = async (req, res) => {
   //* check slug already exist or not
-  const data = await Post.findOne({ where: { slug: req.body.slug}});
-  if(data) throw new Error("Slug already exist!");
+  const slug = slugify(req.body.title, { lower: true, strict: true })
+  const data = await Post.findOne({ where: { slug: slug}});
+  if(data) throw new Error("Title already exist!");
 
   const post = await Post.findOne({ where: { id: req.body.id}});
   if(!post) throw new Error("Post doesn't exist!");
 
   post.title = req.body.title;
-  post.slug = req.body.slug;
+  post.cover_image = req.body.cover_image,
   post.description = req.body.description;
   post.image = req.body.image;
+  post.slug = slug;
   post.user_id = req.body.user_id;
-  post.category_id = req.body.category_id;
   post.published = req.body.published;
   post.save();
 
+  await PostCategory.destroy({where:{ postId: req.body.id }});
+  
+  await req.body.category_id.map(item => {
+    PostCategory.create({
+      postId: req.body.id,
+      categoryId: item.id
+    })
+  });
   return res.status(200).json(post);
 }
 
