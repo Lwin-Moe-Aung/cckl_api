@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router()
+const verifyJWT = require('../middlewares/verifyJWT')
 const verifyIsAdmin = require('../middlewares/verifyIsAdmin');
 const paginatedResults = require('../middlewares/paginatedResults');
 
@@ -16,9 +17,10 @@ const { tryCatch } = require('../utils/tryCatch');
 //* contorller 
 const { getAllPosts, getPost, createPost, updatePost, deletePost, checkSlug} = require("../controllers/postController.js");
 
-router.route('/all').get([verifyIsAdmin()], tryCatch(getAllPosts))
-router.route('/:slug').get([verifyIsAdmin()], tryCatch(getPost))
-router.route('/create').post([verifyIsAdmin(), Validator('createPostSchema')], tryCatch(createPost))
+router.route('/all').get(tryCatch(getAllPosts))
+router.route('/:slug').get(tryCatch(getPost))
+
+router.route('/create').post([verifyJWT, verifyIsAdmin(), Validator('createPostSchema')], tryCatch(createPost))
 router.route('/update').post([verifyIsAdmin(), Validator('updatePostSchema')], tryCatch(updatePost))
 router.route('/delete').post([verifyIsAdmin(), Validator('deletePostSchema')], tryCatch(deletePost))
 router.route('/check-slug').post([verifyIsAdmin(), Validator('checkSlugSchema')], tryCatch(checkSlug))

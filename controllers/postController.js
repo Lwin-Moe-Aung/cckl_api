@@ -16,6 +16,17 @@ const checkSlug = async (req, res) => {
 
 //* get all posts by admains
 const getAllPosts = async (req, res) => {
+  const pageAsNumber = Number.parseInt(req.query.page);
+  const sizeAsNumber = Number.parseInt(req.query.size);
+  let page = 0;
+  if(!Number.isNaN(pageAsNumber) && pageAsNumber > 0){
+      page = pageAsNumber;
+  }
+  let size = 10;
+  if(!Number.isNaN(sizeAsNumber) && !(sizeAsNumber > 50) && !(sizeAsNumber < 1)){
+      size = sizeAsNumber;
+  }
+
   const posts = await Post.findAll({  
     attributes: ['id', 'title', 'cover_image', 'slug', 'view_count', 'published', 'createdAt'],
     include:[ 
@@ -29,15 +40,12 @@ const getAllPosts = async (req, res) => {
         // attributes: [[Sequelize.fn("COUNT", Sequelize.col("postComment.id")), "comment_counts"]] 
       }
     ],
+    limit: size,
+    offset: page * size,
     order: [['createdAt', 'DESC']]
   });
+  return res.status(200).json({ data: posts, totalPages: 1 });
 
-  return res
-    .status(200)
-    .json({
-      data: posts,
-      totalPages: 1
-    });
 }
 
 //* get post by admins through ID
