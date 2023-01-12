@@ -21,9 +21,9 @@ router.route('/all').get(tryCatch(getAllPosts))
 router.route('/:slug').get(tryCatch(getPost))
 
 router.route('/create').post([verifyJWT, verifyIsAdmin(), Validator('createPostSchema')], tryCatch(createPost))
-router.route('/update').post([verifyIsAdmin(), Validator('updatePostSchema')], tryCatch(updatePost))
-router.route('/delete').post([verifyIsAdmin(), Validator('deletePostSchema')], tryCatch(deletePost))
-router.route('/check-slug').post([verifyIsAdmin(), Validator('checkSlugSchema')], tryCatch(checkSlug))
+router.route('/update').post([verifyJWT, verifyIsAdmin(), Validator('updatePostSchema')], tryCatch(updatePost))
+router.route('/delete').post([verifyJWT, verifyIsAdmin(), Validator('deletePostSchema')], tryCatch(deletePost))
+router.route('/check-slug').post([verifyJWT, verifyIsAdmin(), Validator('checkSlugSchema')], tryCatch(checkSlug))
 
 
 module.exports = router

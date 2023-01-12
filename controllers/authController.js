@@ -72,7 +72,7 @@ const login = (req, res) => {
                 sameSite: 'None', 
                 maxAge: 24 * 60 * 60 * 1000
         });
-        const { password, refresh_token, id,  ...data } = user.dataValues;
+        const { password, refresh_token, ...data } = user.dataValues;
       
         return res.status(200)
             .json({data, accessToken});

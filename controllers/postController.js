@@ -4,6 +4,7 @@ const { post } = require('../routes/posts');
 const Post = db.posts;
 const PostCategory = db.post_categories;
 const Sequelize = db.Sequelize;
+const { Op } = require("sequelize");
 
 //* get all posts by admains
 const checkSlug = async (req, res) => {
@@ -99,9 +100,10 @@ const createPost = async (req, res) => {
 
 //* update post by admins
 const updatePost = async (req, res) => {
+  // console.log(req.body)
   //* check slug already exist or not
   const slug = slugify(req.body.title, { lower: true, strict: true })
-  const data = await Post.findOne({ where: { slug: slug}});
+  const data = await Post.findOne({ where: { slug: slug, id: {[Op.ne]: req.body.id}}});
   if(data) throw new Error("Title already exist!");
 
   const post = await Post.findOne({ where: { id: req.body.id}});
