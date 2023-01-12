@@ -2,9 +2,11 @@ const slugify = require('slugify')
 const db =  require("../models");
 const { post } = require('../routes/posts');
 const Post = db.posts;
+const User = db.users;
+const Comment = db.comments;
+const Category = db.categories;
 const PostCategory = db.post_categories;
-const Sequelize = db.Sequelize;
-const { Op } = require("sequelize");
+const { Sequelize, Op } = require("sequelize");
 
 //* get all posts by admains
 const checkSlug = async (req, res) => {
@@ -29,21 +31,24 @@ const getAllPosts = async (req, res) => {
   }
 
   const posts = await Post.findAll({  
-    attributes: ['id', 'title', 'cover_image', 'slug', 'view_count', 'published', 'createdAt'],
+    attributes: {
+      include: [[Sequelize.fn("COUNT", Sequelize.col(`comments.id`)), "commentCount"]]
+    },
     include:[ 
       {
-        association:'postUser',
+        model: User,
         attributes: ['id', 'username', 'email', 'photo'],
       },
       {
-        association: 'postComment',
-        attributes: ['id', 'comment']
-        // attributes: [[Sequelize.fn("COUNT", Sequelize.col("postComment.id")), "comment_counts"]] 
+        model: Comment,  attributes: ['id', 'comment'],
       }
     ],
     limit: size,
     offset: page * size,
+    subQuery:false,
+    group: ['Post.id'],
     order: [['createdAt', 'DESC']]
+
   });
   return res.status(200).json({ data: posts, totalPages: 1 });
 
@@ -52,23 +57,40 @@ const getAllPosts = async (req, res) => {
 //* get post by admins through ID
 const getPost = async (req, res) => {
   const post = await Post.findOne({
+   
     include:[
       {
-        association: 'postCategories',
+        model: Category, 
         attributes: ['id', 'name'],
-        where:{
+        through: {attributes: []},
+        where: {
           published:true
         }
       },
       {
-        association: 'postUser',
+        model: User,
         attributes: ['id', 'username', 'photo', 'email'],
       }
     ],
+    group: ['Post.id'],
     where: { slug: req.params.slug }
   });
   if( post == null ) throw new Error("Post not found!");
 
+  const data = await Post.findOne({
+    attributes: {
+      include: [[Sequelize.fn("COUNT", Sequelize.col("comments.id")), "commentCount"]]
+    },
+    include:[
+      {
+        model: Comment,  attributes: ['id', 'comment'],
+      },
+    ],
+    group: ['Post.id'],
+    where: { slug: req.params.slug }
+  });
+  post.dataValues.commentCount = data.dataValues.commentCount;
+  console.log(post);
   return res.status(200).json(post);
 }
 
@@ -136,4 +158,25 @@ const deletePost = async (req, res) => {
   return res.status(200).json("Post deleted successfully!");
 }
 
-module.exports = { getAllPosts, getPost, createPost, updatePost, deletePost, checkSlug}
+//* get random post
+const getRandomPost = async (req, res) => {
+  const limit = Number.parseInt(req.query.limit);
+  // return res.send({limit});
+  const randomPosts = await Post.findAll({ 
+      order: Sequelize.literal('rand()'), 
+      limit,
+      where: { published: true} 
+    });
+    console.log(randomPosts)
+  return res.status(200).json(randomPosts)
+}
+
+module.exports = { 
+    getAllPosts, 
+    getPost, 
+    createPost, 
+    updatePost, 
+    deletePost, 
+    checkSlug,
+    getRandomPost
+}

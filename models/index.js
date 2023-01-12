@@ -46,17 +46,17 @@ db.sequelize.sync({ force: false })
 
 
 //* one to Many Relation
-db.users.hasMany(db.posts, { foreignKey: 'user_id', as: 'userPost'})
-db.posts.belongsTo(db.users, { foreignKey: 'user_id', as: 'postUser' })
+db.users.hasMany(db.posts, { foreignKey: 'user_id'})
+db.posts.belongsTo(db.users, { foreignKey: 'user_id'})
 
-db.users.hasMany(db.comments, { foreignKey: 'user_id', as: 'userComment' })
-db.comments.belongsTo(db.users, { foreignKey: 'user_id', as: 'commentUser' })
+db.users.hasMany(db.comments, { foreignKey: 'user_id'})
+db.comments.belongsTo(db.users, { foreignKey: 'user_id'})
 
-db.posts.hasMany(db.comments, { foreignKey: 'post_id', as: 'postComment' })
-db.comments.belongsTo(db.posts, { foreignKey: 'post_id', as: 'commentPost' })
+db.posts.hasMany(db.comments, { foreignKey: 'post_id'})
+db.comments.belongsTo(db.posts, { foreignKey: 'post_id'})
 
 //* Many to Many 
-db.posts.belongsToMany(db.categories, { through: 'post_category', as: 'postCategories'});
-db.categories.belongsToMany(db.posts, { through: 'post_category', as: 'categoryPosts'});
+db.posts.belongsToMany(db.categories, { through: 'post_category'});
+db.categories.belongsToMany(db.posts, { through: 'post_category'});
 
 module.exports = db

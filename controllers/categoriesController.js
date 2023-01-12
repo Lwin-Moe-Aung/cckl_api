@@ -1,5 +1,7 @@
 const db =  require("../models");
 const Category = db.categories;
+const Post = db.posts;
+const {Sequelize} = require('sequelize');
 
 //* get all categoies by admins
 const getAllCategories = (req, res) => {
@@ -56,4 +58,19 @@ const deleteCategory = async (req, res) => {
     return res.status(200).json("Category deleted successfully!");
 
 }
-module.exports = { getAllCategories, getAllPublishedCategories, getCategory, createCategory, updateCategory, deleteCategory}
+
+//* get categories and their post count
+const postCount = async (req, res) => {
+    const categories = await Category.findAll({
+        attributes: { 
+            include: [[Sequelize.fn("COUNT", Sequelize.col("posts.id")), "postCount"]] 
+        },
+        include: [{
+            model: Post, attributes: [],  through: {attributes: []},
+        }],
+        group: ['Category.id'],
+        where: {published: true}
+    })
+    res.send(categories);
+}
+module.exports = { getAllCategories, getAllPublishedCategories, getCategory, createCategory, updateCategory, deleteCategory, postCount}
