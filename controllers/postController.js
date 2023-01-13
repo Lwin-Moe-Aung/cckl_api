@@ -61,7 +61,7 @@ const getPost = async (req, res) => {
     include:[
       {
         model: Category, 
-        attributes: ['id', 'name'],
+        attributes: ['id', 'name', 'slug'],
         through: {attributes: []},
         where: {
           published:true
@@ -72,7 +72,6 @@ const getPost = async (req, res) => {
         attributes: ['id', 'username', 'photo', 'email'],
       }
     ],
-    group: ['Post.id'],
     where: { slug: req.params.slug }
   });
   if( post == null ) throw new Error("Post not found!");
@@ -90,7 +89,7 @@ const getPost = async (req, res) => {
     where: { slug: req.params.slug }
   });
   post.dataValues.commentCount = data.dataValues.commentCount;
-  console.log(post);
+  // console.log(post);
   return res.status(200).json(post);
 }
 
@@ -159,16 +158,93 @@ const deletePost = async (req, res) => {
 }
 
 //* get random post
-const getRandomPost = async (req, res) => {
+const getRandomPosts = async (req, res) => {
   const limit = Number.parseInt(req.query.limit);
   // return res.send({limit});
   const randomPosts = await Post.findAll({ 
+      attributes: {
+        include: [[Sequelize.fn("COUNT", Sequelize.col(`comments.id`)), "commentCount"]]
+      },
+      include:[
+        {
+        model: Comment,  attributes: ['id', 'comment']
+        }
+      ],
       order: Sequelize.literal('rand()'), 
       limit,
+      subQuery:false,
+      group: ['Post.id'],
       where: { published: true} 
     });
-    console.log(randomPosts)
   return res.status(200).json(randomPosts)
+}
+
+//* get popular post
+const getPopularPosts = async (req, res) => {
+  const limit = Number.parseInt(req.query.limit);
+
+  const randomPosts = await Post.findAll({ 
+      attributes: {
+        include: [[Sequelize.fn("COUNT", Sequelize.col(`comments.id`)), "commentCount"]]
+      },
+      include:[
+        {
+        model: Comment,  attributes: ['id', 'comment']
+        }
+      ],
+      order: [['view_count', 'DESC']],
+      limit,
+      subQuery:false,
+      group: ['Post.id'],
+      where: { published: true} 
+    });
+  return res.status(200).json(randomPosts)
+}
+
+//* get related posts
+const getRelatedPosts = async (req, res) => {
+  const limit = Number.parseInt(req.query.limit);
+  const cat = req.query.cat.split("&");
+  const selfPostSlug = req.query.selfPostSlug || "";
+  console.log(cat);
+  console.log(selfPostSlug);
+  console.log(limit);
+
+
+  //* getting post id 
+  const postId =[
+    ...(await Category.findAll({ 
+      attributes: ['id', 'name'],
+      include:[
+        { 
+          model: Post, 
+          attributes: ['id'], 
+        }
+      ],
+      subQuery:false,
+      where: { slug: cat} 
+    })),
+  ].map(cate => cate.posts.map(post => post.id));
+
+  let arr = [];
+  postId.map(ele => arr=[...arr,...ele]);
+  const unique = arr.filter((item, i, ar) => ar.indexOf(item) === i);
+
+  //* getting related posts
+  const relatedPosts = await Post.findAll({  
+    attributes: {
+      include: [[Sequelize.fn("COUNT", Sequelize.col(`comments.id`)), "commentCount"]]
+    },
+    include:[{ model: Comment,  attributes: ['id', 'comment'] }],
+    limit,
+    subQuery:false,
+    group: ['Post.id'],
+    where:{id: unique, slug: {[Op.ne]: selfPostSlug}},
+    order: Sequelize.literal('rand()'),
+  });
+
+  return res.status(200).json(relatedPosts)
+ 
 }
 
 module.exports = { 
@@ -178,5 +254,7 @@ module.exports = {
     updatePost, 
     deletePost, 
     checkSlug,
-    getRandomPost
+    getRandomPosts,
+    getPopularPosts,
+    getRelatedPosts
 }

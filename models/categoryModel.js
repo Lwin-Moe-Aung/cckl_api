@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: false, 
             defaultValue: true
+        },
+        slug: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true
         }
     })
 

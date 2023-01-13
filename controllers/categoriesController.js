@@ -1,7 +1,8 @@
 const db =  require("../models");
+const slugify = require('slugify')
 const Category = db.categories;
 const Post = db.posts;
-const {Sequelize} = require('sequelize');
+const { Sequelize, Op } = require("sequelize");
 
 //* get all categoies by admins
 const getAllCategories = (req, res) => {
@@ -32,22 +33,35 @@ const getCategory = async (req, res) => {
 
 //* create category by admins
 const createCategory = async (req, res) => {
+    const slug = slugify(req.body.name, { lower: true, strict: true })
+    const data = await Category.findOne({ where: { slug: slug}});
+    if(data) throw new Error("Category already exist!");
+
     await Category.create({
         name: req.body.name,
-        published: req.body.published
+        published: req.body.published,
+        slug
     });
+
     return res.status(200).json('Category successfully created!');
     // throw new Error("User not found dd");
 }
 
 //* update category by admins 
 const updateCategory = async (req, res) => {
+
+    const slug = slugify(req.body.name, { lower: true, strict: true })
+    const data = await Category.findOne({ where: { slug: slug, id: {[Op.ne]: req.body.id}}});
+    if(data) throw new Error("Category already exist!");
+
     const category = await Category.findOne({ where: { id: req.body.id}});
     if(!category) throw new Error("Category doesn't exist!");
 
     category.name = req.body.name;
     category.published = req.body.published;
+    category.slug = slug;
     category.save();
+
     return res.status(200).json(category);
 }
 

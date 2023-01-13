@@ -15,10 +15,13 @@ const Post = db.posts;
 const { tryCatch } = require('../utils/tryCatch');
 
 //* contorller 
-const { getAllPosts, getPost, createPost, updatePost, deletePost, checkSlug, getRandomPost} = require("../controllers/postController.js");
+const { getAllPosts, getPost, createPost, updatePost, deletePost, checkSlug, getRandomPosts, getPopularPosts, getRelatedPosts} = require("../controllers/postController.js");
 
 router.route('/all').get(tryCatch(getAllPosts))
-router.route('/random').get(tryCatch(getRandomPost))
+router.route('/random').get(tryCatch(getRandomPosts))
+router.route('/popular').get(tryCatch(getPopularPosts))
+router.route('/related').get(tryCatch(getRelatedPosts))
+
 router.route('/:slug').get(tryCatch(getPost))
 
 router.route('/create').post([verifyJWT, verifyIsAdmin(), Validator('createPostSchema')], tryCatch(createPost))
