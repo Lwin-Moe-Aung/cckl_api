@@ -50,7 +50,8 @@ const getAllPosts = async (req, res) => {
     order: [['createdAt', 'DESC']]
 
   });
-  return res.status(200).json({ data: posts, totalPages: 1 });
+
+  return res.status(200).json({ data: posts, totalPages: 1 , total: await Post.count()});
 
 }
 
