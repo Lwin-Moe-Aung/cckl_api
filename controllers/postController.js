@@ -6,6 +6,7 @@ const User = db.users;
 const Comment = db.comments;
 const Category = db.categories;
 const PostCategory = db.post_categories;
+const sequelize = db.sequelize
 const { Sequelize, Op } = require("sequelize");
 
 //* get all posts by admains
@@ -248,6 +249,59 @@ const getRelatedPosts = async (req, res) => {
  
 }
 
+//* get posts by category
+const getPostsByCategory = async (req, res) => {
+  const pageAsNumber = Number.parseInt(req.query.page);
+  const sizeAsNumber = Number.parseInt(req.query.size);
+  const slug = req.query.cat;
+
+  let page = 0;
+  if(!Number.isNaN(pageAsNumber) && pageAsNumber > 0){
+      page = pageAsNumber;
+  }
+  let size = 10;
+  if(!Number.isNaN(sizeAsNumber) && !(sizeAsNumber > 50) && !(sizeAsNumber < 1)){
+      size = sizeAsNumber;
+  }
+
+  const catPosts = await Category.findAll({  
+    attributes: ['id', 'name'],
+    // raw: true,
+    include:[ 
+      {
+        model: Post,
+        attributes: { 
+            include: [[
+              sequelize.literal(`(
+                  SELECT COUNT(*)
+                  FROM comments
+                  WHERE
+                      comments.post_id = posts.id
+              )`),
+              'commentCount'
+            ]] 
+        },
+      }
+    ],
+    limit: size,
+    offset: page * size,
+    subQuery:false,
+    order: [['createdAt', 'DESC']],
+    where: { slug }
+  });
+
+  const total = await Category.findOne({  
+    attributes: {
+      include: [[Sequelize.fn("COUNT", Sequelize.col(`posts.id`)), "total_row"],]
+    },
+    include:[{ model: Post}],
+    group: ['Category.id'],
+    where: {slug}
+  }).then(val => val);
+  // console.log(total);
+  return res.status(200).json({ data: catPosts[0]?.posts, totalPages: 1 , total});
+}
+
 module.exports = { 
     getAllPosts, 
     getPost, 
@@ -257,5 +311,6 @@ module.exports = {
     checkSlug,
     getRandomPosts,
     getPopularPosts,
-    getRelatedPosts
+    getRelatedPosts,
+    getPostsByCategory
 }
