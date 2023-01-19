@@ -41,6 +41,7 @@ const login = (req, res) => {
         const accessToken = jwt.sign(
             { 
                 "UserInfo": {
+                    "id": user.id,
                     "username": user.username,
                     "email": user.email,
                     "is_admin": user.is_admin

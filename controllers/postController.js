@@ -1,4 +1,5 @@
 const slugify = require('slugify')
+const jwt = require('jsonwebtoken');
 const db =  require("../models");
 const { post } = require('../routes/posts');
 const Post = db.posts;
@@ -7,6 +8,7 @@ const Comment = db.comments;
 const Category = db.categories;
 const PostCategory = db.post_categories;
 const sequelize = db.sequelize
+const LikeComment = db.like_comment;
 const { Sequelize, Op } = require("sequelize");
 
 //* get all posts by admains
@@ -59,40 +61,97 @@ const getAllPosts = async (req, res) => {
 //* get post by admins through ID
 const getPost = async (req, res) => {
   const post = await Post.findOne({
-   
+    attributes: { 
+      include: [[
+        sequelize.literal(`(
+            SELECT COUNT(*)
+            FROM comments
+            WHERE
+                comments.post_id = post.id
+        )`),
+        'commentCount'
+      ]] 
+    },
     include:[
       {
+        model: Comment,
+        attributes: { 
+          include: [[
+            sequelize.literal(`(
+                SELECT COUNT(*)
+                FROM like_comments
+                WHERE
+                  like_comments.commentId = comment.id
+            )`),
+            'likeCount'
+          ]] 
+        },
+        include:[{ 
+          model: User,
+          required:false,
+        }],
+        separate: true,
+        order: [['createdAt', 'DESC']]
+      },
+      {
         model: Category, 
+        required:false,
         attributes: ['id', 'name', 'slug'],
         through: {attributes: []},
+        include:[{ model: Post, required:false, where:{ slug: {[Op.ne]: req.params.slug}},}],
         where: {
           published:true
         }
       },
       {
         model: User,
-        attributes: ['id', 'username', 'photo', 'email'],
+        attributes: ['id', 'username', 'photo', 'email']
       }
     ],
+    subQuery:false,
     where: { slug: req.params.slug }
-  });
+  })
+  .then(async post => {
+    const likesComments = await LikeComment.findAll({
+      where: {
+        userId: req.user_id,
+        commentId: post.comments.map(comment => comment.id),
+      },
+    })
+    return {
+      ...post.dataValues,
+      comments: post.comments.map(comment => {
+        return {
+          ...comment.dataValues,
+          likedByMe: likesComments.find(like => like.commentId === comment.id),
+        }
+      })
+    }
+  })
+  
   if( post == null ) throw new Error("Post not found!");
 
-  const data = await Post.findOne({
-    attributes: {
-      include: [[Sequelize.fn("COUNT", Sequelize.col("comments.id")), "commentCount"]]
-    },
-    include:[
-      {
-        model: Comment,  attributes: ['id', 'comment'],
+  const postId = post?.categories.map(item => item.posts.map(el => el.id));
+  let arr = [];
+  postId.map(ele => arr=[...arr,...ele]);
+  const unique = arr.filter((item, i, ar) => ar.indexOf(item) === i);
+  
+  if(unique.length !== 0){
+    //* getting related posts
+    const relatedPosts = await Post.findAll({  
+      attributes: {
+        include: [[Sequelize.fn("COUNT", Sequelize.col(`comments.id`)), "commentCount"]]
       },
-    ],
-    group: ['Post.id'],
-    where: { slug: req.params.slug }
-  });
-  post.dataValues.commentCount = data.dataValues.commentCount;
-  // console.log(post);
-  return res.status(200).json(post);
+      include:[{ model: Comment,  attributes: ['id', 'comment'] }],
+      limit:3,
+      subQuery:false,
+      group: ['Post.id'],
+      where:{id: unique},
+      order: Sequelize.literal('rand()'),
+    });
+    return res.status(200).json({...post, relatedPosts});
+  }
+  return res.status(200).json({...post, relatedPosts:[]});
 }
 
 //* create new post by admins

@@ -18,6 +18,7 @@ const imageUploadRouter = require('./routes/imageUpload.js')
 const categoryRouter = require('./routes/categories.js')
 const adminAuthRouter = require('./routes/adminAuth.js')
 const refreshTokenRouter = require('./routes/refreshToken.js')
+const commentRouter = require('./routes/comments.js')
 // const { postRouter, authRouter, userRouter, imageUploadRouter, categoryRouter } = require('./routes')
 const cookieParser = require('cookie-parser')
 const corsOptions = require('./config/corsOptions.js')
@@ -57,7 +58,7 @@ app.use("/api/admin/categories", categoryRouter)
 
 app.use(verifyJWT); //* Jwt Auth middleware
 app.use("/api/admin/users", userRouter)
-
+app.use("/api/admin/posts-comments", commentRouter)
 
 //* Error Handler
 app.use(errorHandler);

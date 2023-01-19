@@ -23,7 +23,7 @@ router.route('/popular').get(tryCatch(getPopularPosts))
 router.route('/related').get(tryCatch(getRelatedPosts))
 router.route('/by-category').get(tryCatch(getPostsByCategory))
 
-router.route('/:slug').get(tryCatch(getPost))
+router.route('/:slug').get(verifyJWT, tryCatch(getPost))
 
 router.route('/create').post([verifyJWT, verifyIsAdmin(), Validator('createPostSchema')], tryCatch(createPost))
 router.route('/update').post([verifyJWT, verifyIsAdmin(), Validator('updatePostSchema')], tryCatch(updatePost))

@@ -21,7 +21,9 @@ const handleRefreshToken = async (req, res) => {
                     "UserInfo": {
                         "username": decoded.username,
                         "email": decoded.email,
-                        "is_admin": foundUser.is_admin
+                        "is_admin": foundUser.is_admin,
+                        "id": foundUser.id
+
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
