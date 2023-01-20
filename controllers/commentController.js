@@ -3,7 +3,8 @@ const db =  require("../models");
 const Post = db.posts;
 const User = db.users;
 const Comment = db.comments;
-const sequelize = db.sequelize
+const sequelize = db.sequelize;
+const LikeComment = db.like_comment;
 const { Sequelize, Op } = require("sequelize");
 const { post } = require('../routes/users');
 
@@ -45,7 +46,47 @@ const updateComment = async (req, res) => {
     return res.status(200).json(comment);
 }
 
+//* delete comment
+const deleteComment = async (req, res) => {
+    const comment = await Comment.findOne({
+        where: { id: req.params.commentId}
+    });
+    if (comment.user_id !== req.user_id) {
+        throw new Error("You are not allow to delete this comment!")
+    }
+    comment.destroy();
+    return res.status(200).json(comment.id);
+}
+
+//* like and unlike comment
+const toggleLikeComment = async (req, res) => {
+    const data = {
+        userId: req.user_id, 
+        commentId: req.params.commentId
+    }
+    const like = await LikeComment.findOne({
+        where: { ...data },
+    })
+    if (like == null) {
+        return res.status(200).json(
+            await LikeComment.create({ ...data })
+                .then(() => {
+                    return { addLike: true }
+            })
+        )
+    } else {
+        return res.status(200).json(
+            await LikeComment.destroy({ where: { ...data } })
+                .then(() => {
+                    return { addLike: false }
+            })
+        )
+    }
+}
+
 module.exports = { 
     createComment, 
-    updateComment
+    updateComment,
+    deleteComment,
+    toggleLikeComment
 }
