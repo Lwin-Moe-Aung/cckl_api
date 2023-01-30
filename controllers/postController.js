@@ -112,12 +112,15 @@ const getPost = async (req, res) => {
     where: { slug: req.params.slug }
   })
   .then(async post => {
-    const likesComments = await LikeComment.findAll({
-      where: {
-        userId: req.user_id,
-        commentId: post.comments.map(comment => comment.id),
-      },
-    })
+    const likesComments = req.user_id 
+      ? await LikeComment.findAll({
+        where: {
+          userId: req.user_id,
+          commentId: post.comments.map(comment => comment.id),
+        },
+      })
+      : [];
+      
     return {
       ...post.dataValues,
       comments: post.comments.map(comment => {

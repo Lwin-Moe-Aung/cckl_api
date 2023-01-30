@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router()
 const verifyJWT = require('../middlewares/verifyJWT')
 const verifyIsAdmin = require('../middlewares/verifyIsAdmin');
+const checkLoginOrNot = require('../middlewares/checkLoginOrNot')
 const paginatedResults = require('../middlewares/paginatedResults');
 
 //* validation
@@ -23,7 +24,7 @@ router.route('/popular').get(tryCatch(getPopularPosts))
 router.route('/related').get(tryCatch(getRelatedPosts))
 router.route('/by-category').get(tryCatch(getPostsByCategory))
 
-router.route('/:slug').get(verifyJWT, tryCatch(getPost))
+router.route('/:slug').get(checkLoginOrNot, tryCatch(getPost))
 
 router.route('/create').post([verifyJWT, verifyIsAdmin(), Validator('createPostSchema')], tryCatch(createPost))
 router.route('/update').post([verifyJWT, verifyIsAdmin(), Validator('updatePostSchema')], tryCatch(updatePost))
