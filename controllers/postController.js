@@ -148,7 +148,7 @@ const getPost = async (req, res) => {
       include:[{ model: Comment,  attributes: ['id', 'comment'] }],
       limit:3,
       subQuery:false,
-      group: ['Post.id'],
+      group: ['id'],
       where:{id: unique},
       order: Sequelize.literal('rand()'),
     });
@@ -237,7 +237,7 @@ const getRandomPosts = async (req, res) => {
       order: Sequelize.literal('rand()'), 
       limit,
       subQuery:false,
-      group: ['Post.id'],
+      group: ['id'],
       where: { published: true} 
     });
   return res.status(200).json(randomPosts)
@@ -259,7 +259,7 @@ const getPopularPosts = async (req, res) => {
       order: [['view_count', 'DESC']],
       limit,
       subQuery:false,
-      group: ['Post.id'],
+      group: ['id'],
       where: { published: true} 
     });
   return res.status(200).json(randomPosts)
@@ -270,9 +270,9 @@ const getRelatedPosts = async (req, res) => {
   const limit = Number.parseInt(req.query.limit);
   const cat = req.query.cat.split("&");
   const selfPostSlug = req.query.selfPostSlug || "";
-  console.log(cat);
-  console.log(selfPostSlug);
-  console.log(limit);
+  // console.log(cat);
+  // console.log(selfPostSlug);
+  // console.log(limit);
 
 
   //* getting post id 
@@ -302,7 +302,7 @@ const getRelatedPosts = async (req, res) => {
     include:[{ model: Comment,  attributes: ['id', 'comment'] }],
     limit,
     subQuery:false,
-    group: ['Post.id'],
+    group: ['id'],
     where:{id: unique, slug: {[Op.ne]: selfPostSlug}},
     order: Sequelize.literal('rand()'),
   });
@@ -357,7 +357,7 @@ const getPostsByCategory = async (req, res) => {
       include: [[Sequelize.fn("COUNT", Sequelize.col(`posts.id`)), "total_row"],]
     },
     include:[{ model: Post}],
-    group: ['Category.id'],
+    group: ['id'],
     where: {slug}
   }).then(val => val);
   // console.log(total);
