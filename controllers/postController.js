@@ -49,7 +49,7 @@ const getAllPosts = async (req, res) => {
     limit: size,
     offset: page * size,
     subQuery:false,
-    group: ['Post.id'],
+    group: ['id'],
     order: [['createdAt', 'DESC']]
 
   });
