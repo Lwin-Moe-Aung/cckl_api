@@ -131,7 +131,7 @@ const getPost = async (req, res) => {
       })
     }
   })
-  
+
   if( post == null ) throw new Error("Post not found!");
 
   const postId = post?.categories.map(item => item.posts.map(el => el.id));
