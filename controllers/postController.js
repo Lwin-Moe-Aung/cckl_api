@@ -1,5 +1,6 @@
 const slugify = require('slugify')
 const jwt = require('jsonwebtoken');
+const randomstring = require("randomstring");
 const db =  require("../models");
 const { post } = require('../routes/posts');
 const Post = db.posts;
@@ -159,7 +160,19 @@ const getPost = async (req, res) => {
 
 //* create new post by admins
 const createPost = async (req, res) => {
-  const slug = slugify(req.body.title, { lower: true, strict: true })
+  let slug = slugify(req.body.title, { 
+    lower: true, 
+    strict: true,
+    locale: 'my',
+    remove: undefined 
+  })
+  if(!slug){
+    slug = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic'
+    });
+  }
+  
   const data = await Post.findOne({ where: { slug: slug}});
   if(data) throw new Error("Title already exist!");
 
@@ -187,7 +200,18 @@ const createPost = async (req, res) => {
 const updatePost = async (req, res) => {
   // console.log(req.body)
   //* check slug already exist or not
-  const slug = slugify(req.body.title, { lower: true, strict: true })
+  let slug = slugify(req.body.title, { 
+    lower: true, 
+    strict: true,
+    locale: 'my',
+    remove: undefined 
+  })
+  if(!slug){
+    slug = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic'
+    });
+  }
   const data = await Post.findOne({ where: { slug: slug, id: {[Op.ne]: req.body.id}}});
   if(data) throw new Error("Title already exist!");
 
