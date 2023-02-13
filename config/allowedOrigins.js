@@ -5,6 +5,8 @@ const allowedOrigins = [
     'http://54.169.192.233',
     'http://ccklos.org',
     'http://admin.ccklos.org',
+    'https://ccklos.org',
+    'https://admin.ccklos.org',
 
 ];
 
