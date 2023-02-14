@@ -7,7 +7,8 @@ const allowedOrigins = [
     'http://admin.ccklos.org',
     'https://ccklos.org',
     'https://admin.ccklos.org',
-
+    'http://api.ccklos.org',
+    'https://api.ccklos.org'
 ];
 
 module.exports = allowedOrigins;
