@@ -38,6 +38,12 @@ db.comments = require( './commentModel.js')(sequelize, DataTypes);
 db.post_categories = require( './postCategoryModel.js')(sequelize, DataTypes);
 db.like_comment = require( './likeCommentModel.js')(sequelize, DataTypes);
 db.like_post = require( './likePostModel.js')(sequelize, DataTypes);
+db.navbar_menus = require( './navbarMenuModel.js')(sequelize, DataTypes);
+db.navbar_sub_menus = require( './navbarSubMenuModel.js')(sequelize, DataTypes);
+db.logo = require( './logoModel.js')(sequelize, DataTypes);
+db.banner = require( './bannerModel.js')(sequelize, DataTypes);
+db.heros_people = require( './herosPeopleModel.js')(sequelize, DataTypes);
+db.heros_text = require( './herosTextModel.js')(sequelize, DataTypes);
 
 
 
@@ -49,6 +55,9 @@ db.sequelize.sync({ force: false })
 
 
 //* one to Many Relation
+db.navbar_menus.hasMany(db.navbar_sub_menus, { foreignKey: 'parent_menu_id'})
+db.navbar_sub_menus.belongsTo(db.navbar_menus, { foreignKey: 'parent_menu_id'})
+
 db.users.hasMany(db.posts, { foreignKey: 'user_id'})
 db.posts.belongsTo(db.users, { foreignKey: 'user_id'})
 

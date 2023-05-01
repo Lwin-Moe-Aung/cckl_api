@@ -3,6 +3,12 @@ const { createCategorySchema, updateCategorySchema, deleteCategorySchema } = req
 const { createPostSchema, updatePostSchema, deletePostSchema } = require('./postSchema');
 const { checkSlugSchema } = require('./checkSlugSchema');
 const { createCommentSchema, updateCommentSchema, deleteCommentSchema } = require('./commentSchema');
+const { createNavbarMenuSchema, updateNavbarMenuSchema, deleteNavbarMenuSchema } = require('./navbarMenuSchema');
+const { createNavbarSubMenuSchema, updateNavbarSubMenuSchema, deleteNavbarSubMenuSchema } = require('./navbarSubMenuSchema');
+const { createBannerSchema } = require('./bannerSchema');
+const { createHeroesPeopleSchema, updateHeroesPeopleSchema, deleteHeroesPeopleSchema } = require('./heroesPeopleSchema');
+const { createHeroesTextSchema } = require('./heroesTextSchema');
+
 
 module.exports = {
     createUserSchema,
@@ -17,6 +23,17 @@ module.exports = {
     checkSlugSchema,
     createCommentSchema,
     updateCommentSchema,
-    deleteCommentSchema
+    deleteCommentSchema,
+    createNavbarMenuSchema,
+    updateNavbarMenuSchema,
+    deleteNavbarMenuSchema,
+    createNavbarSubMenuSchema, 
+    updateNavbarSubMenuSchema, 
+    deleteNavbarSubMenuSchema,
+    createBannerSchema,
+    createHeroesPeopleSchema,
+    updateHeroesPeopleSchema,
+    deleteHeroesPeopleSchema,
+    createHeroesTextSchema
 }
 
