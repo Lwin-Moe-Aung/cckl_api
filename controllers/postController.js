@@ -61,6 +61,9 @@ const getAllPosts = async (req, res) => {
 
 //* get post by admins through ID
 const getPost = async (req, res) => {
+  //increase count
+  Post.increment('view_count', { by: 1, where: { slug: req.params.slug }});
+
   const post = await Post.findOne({
     attributes: { 
       include: [[
@@ -155,6 +158,7 @@ const getPost = async (req, res) => {
     });
     return res.status(200).json({...post, relatedPosts});
   }
+ 
   return res.status(200).json({...post, relatedPosts:[]});
 }
 
@@ -183,6 +187,7 @@ const createPost = async (req, res) => {
     image: req.body.image,
     slug: slug,
     user_id: req.body.user_id,
+    view_count:0,
     published: req.body.published
   });
 

@@ -8,6 +8,7 @@ const navbarSubMenuRouter = require('./navbarSubMenu.js')
 const logoRouter = require('./logo.js')
 const heroesTextRouter = require('./heroesText.js')
 const heroesPeopleRouter = require('./heroesPeople.js')
+const forWebsiteRouter = require('./forWebsite.js')
 
 
 module.exports = {
@@ -20,5 +21,6 @@ module.exports = {
     navbarSubMenuRouter,
     logoRouter,
     heroesTextRouter,
-    heroesPeopleRouter
+    heroesPeopleRouter,
+    forWebsiteRouter
 }

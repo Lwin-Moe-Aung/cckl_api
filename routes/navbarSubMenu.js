@@ -19,7 +19,7 @@ router.route('/all').get([verifyJWT, verifyIsAdmin()], tryCatch(getAllNavbarSubM
 router.route('/create').post([verifyJWT, verifyIsAdmin(), Validator('createNavbarSubMenuSchema')], tryCatch(createNavbarSubMenuData))
 router.route('/update').post([verifyJWT, verifyIsAdmin(), Validator('updateNavbarSubMenuSchema')], tryCatch(updateNavbarSubMenuData))
 router.route('/delete').post([verifyJWT, verifyIsAdmin(), Validator('deleteNavbarMenuSchema')], tryCatch(deleteNavbarSubMenuData))
-router.route('/:id').get([verifyJWT, verifyIsAdmin()], tryCatch(getNavbarSubMenuData))
+router.route('/:id').get(tryCatch(getNavbarSubMenuData))
 
 
 

@@ -1,7 +1,6 @@
 const db =  require("../models");
 const slugify = require('slugify')
 const NavbarMenu = db.navbar_menus;
-const Post = db.posts;
 const { Sequelize, Op } = require("sequelize");
 
 //* get all categoies by admins
