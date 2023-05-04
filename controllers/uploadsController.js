@@ -19,7 +19,7 @@ const uploadPostImage = (req, res) => {
 
 const uploadLogoImage = async (req, res) => {
     // let imagePath = req.file.path.replace("/app/public", baseURL);
-    const imagePath = `${process.env.BASE_URL}/uploads/Logo/${req?.file?.filename}`
+    const imagePath = `${process.env.BASE_URL}/uploads/logo/${req?.file?.filename}`
     await Logo.sync({ force: true });
     await Logo.create({image:imagePath});
     return res.json({
