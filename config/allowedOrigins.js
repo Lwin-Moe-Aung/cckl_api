@@ -6,6 +6,7 @@ const allowedOrigins = [
     'http://ccklos.org',
     'http://admin.ccklos.org',
     'https://ccklos.org',
+    'https://ccklos.org/api',
     'https://admin.ccklos.org',
     'http://api.ccklos.org',
     'https://api.ccklos.org'
