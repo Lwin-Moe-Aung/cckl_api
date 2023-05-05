@@ -4,9 +4,8 @@ const allowedOrigins = [
     'http://localhost:5173',
     'http://54.169.192.233',
     'http://ccklos.org',
-    'http://admin.ccklos.org',
     'https://ccklos.org',
-    'https://ccklos.org/api',
+    'http://admin.ccklos.org',
     'https://admin.ccklos.org',
     'http://api.ccklos.org',
     'https://api.ccklos.org'
