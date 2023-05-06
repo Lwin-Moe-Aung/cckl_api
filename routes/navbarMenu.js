@@ -18,7 +18,7 @@ const { getPublishedNavbarMenu, getAllNavbarMenu, getNavbarMenu, createNavbarMen
 router.route('/published-navbarmenus').get([verifyJWT, verifyIsAdmin()], tryCatch(getPublishedNavbarMenu))
 
 router.route('/all').get([verifyJWT, verifyIsAdmin()], tryCatch(getAllNavbarMenu))
-router.route('/create').post([verifyJWT, verifyIsAdmin()], tryCatch(createNavbarMenu))
+router.route('/create').post([verifyJWT, verifyIsAdmin(),Validator('createNavbarMenuSchema')], tryCatch(createNavbarMenu))
 router.route('/update').post([verifyJWT, verifyIsAdmin(), Validator('updateNavbarMenuSchema')], tryCatch(updateNavbarMenu))
 router.route('/delete').post([verifyJWT, verifyIsAdmin(), Validator('deleteNavbarMenuSchema')], tryCatch(deleteNavbarMenu))
 router.route('/:id').get([verifyJWT, verifyIsAdmin()], tryCatch(getNavbarMenu))

@@ -44,6 +44,8 @@ db.logo = require( './logoModel.js')(sequelize, DataTypes);
 db.banner = require( './bannerModel.js')(sequelize, DataTypes);
 db.heros_people = require( './herosPeopleModel.js')(sequelize, DataTypes);
 db.heros_text = require( './herosTextModel.js')(sequelize, DataTypes);
+db.feature = require( './featureModel.js')(sequelize, DataTypes);
+db.map = require( './mapModel.js')(sequelize, DataTypes);
 
 
 

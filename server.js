@@ -22,6 +22,9 @@ const logoRouter = require('./routes/logo.js')
 const bannerRouter = require('./routes/banner.js')
 const heroesTextRouter = require('./routes/heroesText.js')
 const heroesPeopleRouter = require('./routes/heroesPeople.js')
+const featureRouter = require('./routes/feature.js')
+const mapRouter = require('./routes/map.js')
+
 const forWebsiteRouter = require('./routes/forWebsite.js')
 
 const adminAuthRouter = require('./routes/adminAuth.js')
@@ -69,6 +72,10 @@ app.use("/api/admin/logo", logoRouter)
 app.use("/api/admin/banner", bannerRouter)
 app.use("/api/admin/heroes-text", heroesTextRouter)
 app.use("/api/admin/heroes-people", heroesPeopleRouter)
+app.use("/api/admin/feature", featureRouter)
+app.use("/api/admin/map", mapRouter)
+
+
 app.use("/api/website", forWebsiteRouter)
 
 app.use(verifyJWT); //* Jwt Auth middleware

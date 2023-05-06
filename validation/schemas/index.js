@@ -8,7 +8,8 @@ const { createNavbarSubMenuSchema, updateNavbarSubMenuSchema, deleteNavbarSubMen
 const { createBannerSchema } = require('./bannerSchema');
 const { createHeroesPeopleSchema, updateHeroesPeopleSchema, deleteHeroesPeopleSchema } = require('./heroesPeopleSchema');
 const { createHeroesTextSchema } = require('./heroesTextSchema');
-
+const { createFeatureSchema, updateFeatureSchema, deleteFeatureSchema } = require('./featureSchema');
+const { createMapSchema } = require('./mapSchema');
 
 module.exports = {
     createUserSchema,
@@ -34,6 +35,10 @@ module.exports = {
     createHeroesPeopleSchema,
     updateHeroesPeopleSchema,
     deleteHeroesPeopleSchema,
-    createHeroesTextSchema
+    createHeroesTextSchema,
+    createFeatureSchema,
+    updateFeatureSchema,
+    deleteFeatureSchema,
+    createMapSchema
 }
 

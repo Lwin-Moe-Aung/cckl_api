@@ -7,6 +7,9 @@ const NavbarSubMenu = db.navbar_sub_menus;
 const Banner = db.banner;
 const HeroesText = db.heros_text;
 const HeroesPeople = db.heros_people;
+const Feature = db.feature;
+const Map = db.map;
+
 
 // get navbar data (logo , navbar menu, sub menu)
 const getNavbarDataE = async (req, res) => {
@@ -20,7 +23,10 @@ const getNavbarDataE = async (req, res) => {
         "logo": await Logo.findOne(),
         "banner": await Banner.findOne({attributes: ['id', ['e_title','title'], 'image']}),
         "heroesText": await HeroesText.findOne({attributes: ['id', ['e_title','title'], ['e_description', 'description']]}),
-        "heroesPeople": await HeroesPeople.findAll({attributes: ['id', 'image', ['e_name','name'],  ['e_job_title', 'job_title'], 'fb_link']})
+        "heroesPeople": await HeroesPeople.findAll({attributes: ['id', 'image', ['e_name','name'],  ['e_job_title', 'job_title'], 'fb_link']}),
+        "feature": await Feature.findAll({attributes: ['id', ['e_title','title'], ['e_description', 'description'], 'icon', 'color']}),
+        "map": await Map.findOne(),
+
     });
 }
 
@@ -36,7 +42,9 @@ const getNavbarDataM = async (req, res) => {
         "logo": await Logo.findOne(),
         "banner": await Banner.findOne({attributes: ['id', ['m_title','title'], 'image']}),
         "heroesText": await HeroesText.findOne({attributes: ['id', ['m_title','title'], ['m_description', 'description']]}),
-        "heroesPeople": await HeroesPeople.findAll({attributes: ['id', 'image', ['m_name','name'],  ['m_job_title', 'job_title'], 'fb_link']})
+        "heroesPeople": await HeroesPeople.findAll({attributes: ['id', 'image', ['m_name','name'],  ['m_job_title', 'job_title'], 'fb_link']}),
+        "feature": await Feature.findAll({attributes: ['id', ['m_title','title'], ['m_description', 'description'], 'icon', 'color']}),
+        "map": await Map.findOne(),
     });
 }
 
