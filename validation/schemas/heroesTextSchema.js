@@ -1,10 +1,13 @@
 const Joi = require('joi')
 
-const createMapSchema = Joi.object({
-    map: Joi.string().required(),
+const createHeroesTextSchema = Joi.object({
+    e_title: Joi.string().required(),
+    m_title: Joi.string().required(),
+    e_description: Joi.string().required(),
+    m_description: Joi.string().required(),
 });
 
 module.exports = {
-    createMapSchema,
+    createHeroesTextSchema,
 }
 
