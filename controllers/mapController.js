@@ -13,6 +13,7 @@ const getMap = async (req, res) => {
 
 //* create map by admins
 const createMap = async (req, res) => {
+    await Map.sync({ force: true });
     await Map.create({
         map: req.body.map,
     });
