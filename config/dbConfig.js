@@ -1,7 +1,7 @@
 const dbConfig = {
     HOST: 'localhost',
-    USER: 'root',
-    PASSWORD: 'password',
+    USER: 'ccklos-admin',
+    PASSWORD: 'Cckl0s@dmin101',
     DB: 'cckl_database',
     dialect: 'mysql',
     pool: {
