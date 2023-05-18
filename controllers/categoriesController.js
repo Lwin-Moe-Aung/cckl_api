@@ -82,7 +82,7 @@ const postCount = async (req, res) => {
         include: [{
             model: Post, attributes: [],  through: {attributes: []},
         }],
-        group: ['Category.id'],
+        group: ['id'],
         where: {published: true}
     })
     res.send(categories);

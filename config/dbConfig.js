@@ -1,5 +1,5 @@
 const dbConfig = {
-    HOST: 'localhost',
+    HOST: '54.169.192.233',
     USER: 'ccklos-admin',
     PASSWORD: 'Cckl0s@dmin101',
     DB: 'cckl_database',
